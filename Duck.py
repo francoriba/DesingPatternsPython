@@ -1,76 +1,116 @@
-from abc import ABC, abstractclassmethod
+class FlyBehavior:
+    def fly(self):
+        raise NotImplementedError
 
-class Duck(ABC):
 
-    def __init__(self, type, color, gender):
-        self._type = type
-        self._color = color
-        self._gender = gender
-        
-    @property
-    def get_type(self):
-        return self._type
+class FlyWithWings(FlyBehavior):
+    def fly(self):
+        print("I'm flying!!")
 
-    @property
-    def get_color(self):
-        return self._color
 
-    @property
-    def get_gender(self):
-        return self._gender
-    
-    @get_type.setter
-    def set_type(self, new_type):
-        self._type = new_type
+class FlyNoWay(FlyBehavior):
+    def fly(self):
+        print("I can't fly")
 
-    @get_color.setter
-    def set_color(self, new_color):
-        self._color = new_color
 
-    @get_gender.setter
-    def set_gender(self, new_gender):
-        self._gender = new_gender
+class FlyRocketPowered(FlyBehavior):
+    def fly(self):
+        print("I'm flying with a rocket!'")
 
-    def quack():
-        print("Cuack Cuack")
+#-----------------------------------------------------
+class QuackBehavior:
+    def quack(self):
+        raise NotImplementedError
 
-    def swim():
-        print("splash slash")
 
-    @abstractclassmethod
-    def display():
-        pass
+class Quack(QuackBehavior):
+    def quack(self):
+        print("Quack")
+
+
+class MuteQuack(QuackBehavior):
+    def quack(self):
+        print("<< Silence >>")
+
+
+class Squeak(QuackBehavior):
+    def quack(self):
+        print("Squeak")
+
+#-----------------------------------------------------
+class Duck:
+    _fly_behavior = None
+    _quack_behavior = None
+
+    def set_fly_behavior(self, fly_behavior):
+        self._fly_behavior = fly_behavior
+
+    def set_quack_behavior(self, quack_behavior):
+        self._quack_behavior = quack_behavior
+
+    def display(self):
+        raise NotImplementedError
+
+    def perform_fly(self):
+        self._fly_behavior.fly()
+
+    def perform_quack(self):
+        self._quack_behavior.quack()
+
+    def swim(self):
+        print("All ducks float, even decoys!")
+
 
 class MallardDuck(Duck):
-    def __init_subclass__(self, type, color, gender):
-        super().__init__(type, color, gender) #llamada al método __init__() de la clase padre
+    _fly_behavior = FlyWithWings()
+    _quack_behavior = Quack()
 
     def display(self):
-        print("Im a Mallard duck")
+        print("I'm a real Mallard duck")
 
-class RedheadDuck(Duck): 
-    def __init_subclass__(self, type, color, gender):
-        super().__init__(type, color, gender) 
 
-    def display(self):
-        print("Im a ",self.get_type, " duck")
-
-class RubberDuck(Duck): 
-    def __init_subclass__(self, type, color, gender):
-        super().__init__(type, color, gender) 
-
-    def squeak(self):
-        print("squeak squeak squeak")
+class DecoyDuck(Duck):
+    _fly_behavior = FlyNoWay()
+    _quack_behavior = MuteQuack()
 
     def display(self):
-        print("Im a ",self.get_type, " duck")
+        print("I'm a duck Decoy")
 
 
-patoRojo = RedheadDuck("Redhead", "Red", "Male")
-patoMallard = MallardDuck("Mallard ", "White", "Female")
-patoRubber = RubberDuck("Rubber", "Yellow", "Male")
+class ModelDuck(Duck):
+    _fly_behavior = FlyNoWay()
+    _quack_behavior = Squeak()
+
+    def display(self):
+        print("I'm a real Mallard duck")
 
 
-patoRojo.display()
-patoRubber.display()
-patoRubber.squeak()
+class RedHeadDuck(Duck):
+    _fly_behavior = FlyWithWings()
+    _quack_behavior = Quack()
+
+    def display(self):
+        print("I'm a real Red Headed duck")
+
+
+class RubberDuck(Duck):
+    _fly_behavior = FlyNoWay()
+    _quack_behavior = Squeak()
+
+    def display(self):
+        print("I'm a rubber duckie")
+
+
+def mini_duck_simulator():
+    mallard = MallardDuck()
+    mallard.perform_quack()
+    mallard.perform_fly()
+
+    model = ModelDuck()
+    model.perform_fly()
+    model.set_fly_behavior(FlyRocketPowered())
+    model.perform_fly()
+
+
+if __name__ == "__main__":
+    mini_duck_simulator()
